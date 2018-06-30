@@ -41,6 +41,8 @@ Dim Rng2 As Range
 Set Rng1 = tickerRange.Cells(1, 1)
 Set Rng2 = tickerRange.Cells(1, 1)
 
+Call createTemplate
+
 'define a batch variable
 
 Dim batch As String
@@ -149,6 +151,8 @@ If tickerRangeLen < 100 Then
     'join those hundred into a single string string
     batch = Join(tickers, ",")
     
+    MsgBox batch
+    
     'fetch the url
     Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
     MyRequest.Open "GET", "https://api.iextrading.com/1.0/stock/market/batch?symbols=" & batch & "&types=company,quote,stats,financials,earnings,dividends"
@@ -161,6 +165,7 @@ If tickerRangeLen < 100 Then
     For i = 1 To tickerRangeLen Step 1
         Dict("A") = Rng2.Value
         Call iexTradingJSON(Dict, Rng1, Rng2, Json)
+        Rng2.Offset(1, 0).Select
         Set Rng2 = ActiveCell
     Next
 End If
@@ -225,12 +230,13 @@ Public Function iexTradingJSON(Dict As Dictionary, Rng1 As Range, Rng2 As Range,
         Rng2.Offset(0, 5).Value = CEO
         Rng2.Offset(0, 6).Value = issueType
         Rng2.Offset(0, 7).Value = Format(latestPrice, "Currency")
-        Rng2.Offset(0, 14).Value = Format(latestVolume, "#,##0")
-        Rng2.Offset(0, 16).Value = Format(marketcap, "Currency")
-        Rng2.Offset(0, 17).Value = Format(sharesOutstanding, "#,##0")
-        Rng2.Offset(0, 18).Value = Format(float, "#,##0")
+        Rng2.Offset(0, 8).Value = Format(latestVolume, "#,##0")
+        Rng2.Offset(0, 9).Value = Format(marketcap, "Currency")
+        Rng2.Offset(0, 10).Value = Format(sharesOutstanding, "#,##0")
+        Rng2.Offset(0, 11).Value = Format(float, "#,##0")
 
 ExitErrorPoint:
+
 Exit Function
 
 Handler:
@@ -266,96 +272,11 @@ Range("E1").Value = "Industry"
 Range("F1").Value = "CEO"
 Range("G1").Value = "Issue Type"
 Range("H1").Value = "Latest Price"
-Range("I1").Value = "Open Price"
-Range("J1").Value = "Close Price"
-Range("K1").Value = "Low"
-Range("L1").Value = "High"
-Range("M1").Value = "Change"
-Range("N1").Value = "Change Percent"
-Range("O1").Value = "Latest Volume"
-Range("P1").Value = "Beta"
-Range("Q1").Value = "Marketcap"
-Range("R1").Value = "Shares Outstanding"
-Range("S1").Value = "Float"
-Range("T1").Value = "Avg Total Volume"
-Range("U1").Value = "Week 52 Low"
-Range("V1").Value = "Week 52 High"
-Range("W1").Value = "50 Day Moving Avg"
-Range("X1").Value = "200 Day Moving Avg"
-Range("Y1").Value = "5 Day Change Percent"
-Range("Z1").Value = "1 Month Change Percent"
-Range("AA1").Value = "3 Month Change Percent"
-Range("AB1").Value = "6 Month Change Percent"
-Range("AC1").Value = "YTD Change Percent"
-Range("AD1").Value = "1 Year Change Percent"
-Range("AE1").Value = "2 Year Change Percent"
-Range("AF1").Value = "5 Year Change Percent"
-Range("AG1").Value = "Revenue"
-Range("AH1").Value = "Revenue Per Share"
-Range("AI1").Value = "Revenue Per Employee"
-Range("AJ1").Value = "Gross Profit"
-Range("AK1").Value = "Profit Margin"
-Range("AL1").Value = "EBITDA"
-Range("AM1").Value = "Cash"
-Range("AN1").Value = "Debt"
-Range("AO1").Value = "Return On Equity"
-Range("AP1").Value = "Return On Assets"
-Range("AQ1").Value = "Return On Capital"
-Range("AR1").Value = "P/E Ratio"
-Range("AS1").Value = "P/E Ratio Low"
-Range("AT1").Value = "P/E Ratio High"
-Range("AU1").Value = "Price To Sales"
-Range("AV1").Value = "Price To Book"
-Range("AW1").Value = "Short Ratio"
-Range("AX1").Value = "Total Revenue"
-Range("AY1").Value = "Cost Of Revenue"
-Range("AZ1").Value = "Gross Profit"
-Range("BA1").Value = "Operating Revenue"
-Range("BB1").Value = "Operating Income"
-Range("BC1").Value = "Net Income"
-Range("BD1").Value = "Research and Development"
-Range("BE1").Value = "Total Operating Expenses"
-Range("BF1").Value = "Current Assets"
-Range("BG1").Value = "Total Assets"
-Range("BH1").Value = "Total Liabilities"
-Range("BI1").Value = "Current Cash"
-Range("BJ1").Value = "Current Debt"
-Range("BK1").Value = "Total Cash"
-Range("BL1").Value = "Total Debt"
-Range("BM1").Value = "Shareholder Equity"
-Range("BN1").Value = "Cash Change"
-Range("BO1").Value = "Cash Flow"
-Range("BP1").Value = "Operating Gains Losses"
-Range("BQ1").Value = "Amount"
-Range("BR1").Value = "Dividend Type"
-Range("BS1").Value = "Dividend Rate"
-Range("BT1").Value = "Dividend Yield"
-Range("BU1").Value = "Ex Date"
-Range("BV1").Value = "Payment Date"
-Range("BW1").Value = "Declared Date"
-Range("BX1").Value = "Record Date"
-Range("BY1").Value = "Qualified"
-Range("A1:BY1").Select
-Selection.Font.Bold = True
-Range("A1").Select
-Selection.EntireRow.Insert
-Range("A1").Select
-Range("A1").Value = "Details"
-Selection.AutoFill Destination:=Range("A1:G1"), Type:=xlFillDefault
-Range("H1").Select
-Range("H1").Value = "Current Quote"
-Selection.AutoFill Destination:=Range("H1:S1"), Type:=xlFillDefault
-Range("T1").Select
-Range("T1").Value = "Historical Quote"
-Selection.AutoFill Destination:=Range("T1:AF1"), Type:=xlFillDefault
-Range("AG1").Select
-Range("AG1").Value = "Annual"
-Selection.AutoFill Destination:=Range("AG1:AW1"), Type:=xlFillDefault
-Range("AX1").Select
-Range("AX1").Value = "Quarter"
-Selection.AutoFill Destination:=Range("AX1:BP1"), Type:=xlFillDefault
-Range("A1:BY1").Select
-Selection.Font.Bold = True
+Range("I1").Value = "Latest Volume"
+Range("J1").Value = "Marketcap"
+Range("K1").Value = "Shares Outstanding"
+Range("L1").Value = "Shares Float"
+
 
 
 End Function
