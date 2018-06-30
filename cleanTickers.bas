@@ -69,7 +69,7 @@ Dim j As Integer
 qtyHundredBatches = tickerRangeLen / 100
 remainder = tickerRangeLen Mod 100
 
-If tickerRangeLen >= 100 Then
+If tickerRangeLen > 100 Then
 j = 1
 While j < qtyHundredBatches
     
@@ -79,8 +79,7 @@ While j < qtyHundredBatches
     For i = 1 To 100 Step 1
         Rng1.Select
         tickers(i) = Selection.Value
-        Rng1.Offset(1, 0).Select
-        Set Rng1 = ActiveCell
+        Set Rng1 = Rng1.Offset(1, 0)
     Next
     
     'join those hundred into a single string string
@@ -99,7 +98,7 @@ While j < qtyHundredBatches
     For i = 1 To 100 Step 1
         Dict("A") = Rng2.Value
         Call iexTradingJSON(Dict, Rng1, Rng2, Json)
-        Set Rng2 = ActiveCell
+        Set Rng2 = Rng2.Offset(1, 0)
     Next
     j = j + 1
 Wend
@@ -131,11 +130,11 @@ Wend
     For i = 1 To remainder Step 1
         Dict("A") = Rng2.Value
         Call iexTradingJSON(Dict, Rng1, Rng2, Json)
-        Set Rng2 = ActiveCell
+        Set Rng2 = Rng2.Offset(1, 0)
     Next
 
 End If
-If tickerRangeLen < 100 Then
+If tickerRangeLen <= 100 Then
     
     'redefine tickers
     ReDim tickers(1 To tickerRangeLen) As Variant
@@ -144,14 +143,11 @@ If tickerRangeLen < 100 Then
     For i = 1 To tickerRangeLen Step 1
         Rng1.Select
         tickers(i) = Selection.Value
-        Rng1.Offset(1, 0).Select
-        Set Rng1 = ActiveCell
+        Set Rng1 = Rng1.Offset(1, 0)
     Next
     
     'join those hundred into a single string string
     batch = Join(tickers, ",")
-    
-    MsgBox batch
     
     'fetch the url
     Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
@@ -165,8 +161,7 @@ If tickerRangeLen < 100 Then
     For i = 1 To tickerRangeLen Step 1
         Dict("A") = Rng2.Value
         Call iexTradingJSON(Dict, Rng1, Rng2, Json)
-        Rng2.Offset(1, 0).Select
-        Set Rng2 = ActiveCell
+        Set Rng2 = Rng2.Offset(1, 0)
     Next
 End If
 
@@ -186,7 +181,7 @@ Application.DisplayAlerts = True
 Range("A1").Select
     With ActiveWindow
         .SplitColumn = 1
-        .SplitRow = 2
+        .SplitRow = 1
     End With
 ActiveWindow.FreezePanes = True
 
