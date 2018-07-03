@@ -22,7 +22,7 @@ def jsonParsetoCSV(jsonLoad, CurrentTicker):
     with open('StockDatabase/'+ str(CurrentTicker) + '.csv', 'a', encoding="utf-8") as csvfileA:
         fieldnames = ['Date','Time','Price', 'Volume', 'MktCap','SharesOut', 'SharesFloat']
         writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
-        #writer.writeheader()
+        writer.writeheader()
         latestTime = jsonLoad[CurrentTicker]['quote']['latestTime']
         latestPrice = jsonLoad[CurrentTicker]['quote']['latestPrice']
         latestVolume = jsonLoad[CurrentTicker]['quote']['latestVolume']
@@ -31,11 +31,13 @@ def jsonParsetoCSV(jsonLoad, CurrentTicker):
         sharesFloat = jsonLoad[CurrentTicker]['stats']['float']
         writer.writerow({'Date': datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),'Time': datetime.datetime.now(datetime.timezone.utc).strftime("%H:%M:%S.%f %Z"),'Price': str(latestPrice), 'Volume': str(latestVolume), 'MktCap': str(marketcap),'SharesOut': str(sharesOutstanding), 'SharesFloat': str(sharesFloat)})
 
+start_time = time.time()
+
 #create source folder if it doesnt exist yet
 if not os.path.exists('StockDatabase'):
     os.makedirs('StockDatabase')
 
-with open("AmericanTickers101.csv", encoding='utf-8') as csvfile:
+with open("AmericanTickers.csv", encoding='utf-8') as csvfile:
     reader = csv.reader(csvfile)
     allTickers = list(reader)
     tickerCount = len(allTickers)
@@ -67,3 +69,6 @@ with open("AmericanTickers101.csv", encoding='utf-8') as csvfile:
             for innerStr in ticker:
                 CurrentTicker = innerStr
                 jsonParsetoCSV(jsonLoad, CurrentTicker)
+
+elapsed_time = time.time() - start_time
+print(elapsed_time)
