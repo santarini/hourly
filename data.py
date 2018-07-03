@@ -10,35 +10,61 @@ import json
 
 batch = []
 
+CurrentTicker = "AAPL"
+
+def dataRequest(batchReq):
+        response = requests.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + str(batchReq)+ '&types=company,quote,stats')
+        jsonLoad = json.loads(response.text)
+        return jsonLoad
+        #jsonParsetoCSV(jsonLoad, CurrentTicker)
+
+def jsonParsetoCSV(jsonLoad, CurrentTicker):
+    with open('StockDatabase/'+ str(CurrentTicker) + '.csv', 'a', encoding="utf-8") as csvfileA:
+        fieldnames = ['Date','Time','Price', 'Volume', 'MktCap','SharesOut', 'SharesFloat']
+        writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
+        latestTime = jsonLoad[CurrentTicker]['quote']['latestTime']
+        latestPrice = jsonLoad[CurrentTicker]['quote']['latestPrice']
+        latestVolume = jsonLoad[CurrentTicker]['quote']['latestVolume']
+        marketcap = jsonLoad[CurrentTicker]['stats']['marketcap']
+        sharesOutstanding = jsonLoad[CurrentTicker]['stats']['sharesOutstanding']
+        sharesFloat = jsonLoad[CurrentTicker]['stats']['float']
+        writer.writerow({'Date': 'blank','Time': 'blank','Price': str(latestPrice), 'Volume': str(latestVolume), 'MktCap': str(marketcap),'SharesOut': str(sharesOutstanding), 'SharesFloat': str(sharesFloat)})
+    
+
 #create source folder if it doesnt exist yet
 if not os.path.exists('StockDatabase'):
     os.makedirs('StockDatabase')
 
-with open("AmericanTickers100.csv", encoding='utf-8') as csvfile:
+with open("AmericanTickers10.csv", encoding='utf-8') as csvfile:
     reader = csv.reader(csvfile)
     allTickers = list(reader)
     tickerCount = len(allTickers)
-    for ticker in allTickers:
-        for innerStr in ticker:
-            batch.append(innerStr)
-    batchReq = ",".join(batch)
-    #make request fetch data
-    response = requests.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + str(batchReq)+ '&types=company,quote,stats')
-    jsonLoad = json.loads(response.text)
-    companyName = JsonLoad[CurrentTicker]['company']['companyName']
-    website = JsonLoad[CurrentTicker]['company']['website']
-    description = JsonLoad[CurrentTicker]['company']['description']
-    exchange = JsonLoad[CurrentTicker]['company']['exchange']
-    sector = JsonLoad[CurrentTicker]['company']['sector']
-    industry = JsonLoad[CurrentTicker]['company']['industry']
-    CEO = JsonLoad[CurrentTicker]['company']['CEO']
-    issueType = JsonLoad[CurrentTicker]['company']['issueType']
-    latestTime = JsonLoad[CurrentTicker]['quote']['latestTime']
-    latestPrice = JsonLoad[CurrentTicker]['quote']['latestPrice']
-    latestVolume = JsonLoad[CurrentTicker]['quote']['latestVolume']
-    marketcap = JsonLoad[CurrentTicker]['stats']['marketcap']
-    sharesOutstanding = JsonLoad[CurrentTicker]['stats']['sharesOutstanding']
-    sharesFloat = JsonLoad[CurrentTicker]['stats']['float']
+    QtyHundreds = tickerCount/100
+
+
+    
+    if QtyHundreds > 1:
+        while QtyHundreds > 1:
+            for item in allTickers[i:j]:
+                for innerStr in ticker:
+                    batch.append(innerStr)
+            batchReq = ",".join(batch)
+            dataRequest(batchReq)
+
+    
+    if QtyHundreds <= 1:
+        for ticker in allTickers[0:tickerCount]:
+            for innerStr in ticker:
+                batch.append(innerStr)
+        batchReq = ",".join(batch)
+        jsonLoad = dataRequest(batchReq)
+        for ticker in allTickers[0:tickerCount]:
+            for innerStr in ticker:
+                CurrentTicker = innerStr
+                jsonParsetoCSV(jsonLoad, CurrentTicker)
+
+
+
 
 
 
