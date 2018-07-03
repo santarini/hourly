@@ -35,30 +35,35 @@ def jsonParsetoCSV(jsonLoad, CurrentTicker):
 if not os.path.exists('StockDatabase'):
     os.makedirs('StockDatabase')
 
-with open("AmericanTickers10.csv", encoding='utf-8') as csvfile:
+with open("AmericanTickers101.csv", encoding='utf-8') as csvfile:
     reader = csv.reader(csvfile)
     allTickers = list(reader)
     tickerCount = len(allTickers)
     QtyHundreds = tickerCount/100
-
-
-    
+    i = 0
     if QtyHundreds > 1:
+        j = 100
         while QtyHundreds > 1:
-            for item in allTickers[i:j]:
+            for ticker in allTickers[i:j]:
                 for innerStr in ticker:
                     batch.append(innerStr)
             batchReq = ",".join(batch)
-            dataRequest(batchReq)
-
-    
+            jsonLoad = dataRequest(batchReq)
+            for ticker in allTickers[i:j]:
+                for innerStr in ticker:
+                    CurrentTicker = innerStr
+                    jsonParsetoCSV(jsonLoad, CurrentTicker)
+            i = i + 100
+            j = j + 100
+            QtyHundreds = QtyHundreds - 1
+            batch = []
     if QtyHundreds <= 1:
-        for ticker in allTickers[0:tickerCount]:
+        for ticker in allTickers[i:tickerCount]:
             for innerStr in ticker:
                 batch.append(innerStr)
         batchReq = ",".join(batch)
         jsonLoad = dataRequest(batchReq)
-        for ticker in allTickers[0:tickerCount]:
+        for ticker in allTickers[i:tickerCount]:
             for innerStr in ticker:
                 CurrentTicker = innerStr
                 jsonParsetoCSV(jsonLoad, CurrentTicker)
