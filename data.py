@@ -3,7 +3,8 @@ import itertools
 from itertools import zip_longest
 import re
 import os
-import datetime as dt
+import time
+import datetime
 import pandas_datareader.data as web
 import requests
 import json
@@ -13,7 +14,7 @@ batch = []
 CurrentTicker = "AAPL"
 
 def dataRequest(batchReq):
-        response = requests.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + str(batchReq)+ '&types=company,quote,stats')
+        response = requests.get('https://api.iextrading.com/1.0/stock/market/batch?symbols=' + str(batchReq)+ '&types=quote,stats')
         jsonLoad = json.loads(response.text)
         return jsonLoad
         #jsonParsetoCSV(jsonLoad, CurrentTicker)
@@ -22,7 +23,8 @@ def jsonParsetoCSV(jsonLoad, CurrentTicker):
     with open('StockDatabase/'+ str(CurrentTicker) + '.csv', 'a', encoding="utf-8") as csvfileA:
         fieldnames = ['Date','Time','Price', 'Volume', 'MktCap','SharesOut', 'SharesFloat']
         writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
-        writer.writeheader()
+        #to initialize database uncomment writeheader
+        #writer.writeheader()
         latestTime = jsonLoad[CurrentTicker]['quote']['latestTime']
         latestPrice = jsonLoad[CurrentTicker]['quote']['latestPrice']
         latestVolume = jsonLoad[CurrentTicker]['quote']['latestVolume']
@@ -59,6 +61,8 @@ with open("AmericanTickers.csv", encoding='utf-8') as csvfile:
             j = j + 100
             QtyHundreds = QtyHundreds - 1
             batch = []
+            print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount, 2)) + "% complete.")
+                  
     if QtyHundreds <= 1:
         for ticker in allTickers[i:tickerCount]:
             for innerStr in ticker:
@@ -69,6 +73,9 @@ with open("AmericanTickers.csv", encoding='utf-8') as csvfile:
             for innerStr in ticker:
                 CurrentTicker = innerStr
                 jsonParsetoCSV(jsonLoad, CurrentTicker)
+                i = i + 1
+                  
+    print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount, 2)) + "% complete.")
 
 elapsed_time = time.time() - start_time
-print(elapsed_time)
+print("Program completed in "+ str(round(elapsed_time, 3)) + " seconds. " + str(round(i/tickerCount, 2)) + "% complete.")
