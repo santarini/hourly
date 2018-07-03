@@ -61,7 +61,8 @@ with open("AmericanTickers.csv", encoding='utf-8') as csvfile:
             j = j + 100
             QtyHundreds = QtyHundreds - 1
             batch = []
-            print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount, 2)) + "% complete.")
+            elapsed_time = time.time() - start_time
+            print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount * 100, 2)) + "% complete. " + str(round(elapsed_time, 3))  + " seconds elapsed.")
                   
     if QtyHundreds <= 1:
         for ticker in allTickers[i:tickerCount]:
@@ -74,8 +75,9 @@ with open("AmericanTickers.csv", encoding='utf-8') as csvfile:
                 CurrentTicker = innerStr
                 jsonParsetoCSV(jsonLoad, CurrentTicker)
                 i = i + 1
-                  
-    print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount, 2)) + "% complete.")
+    elapsed_time = time.time() - start_time              
+    print(str(i) + " of " + str(tickerCount) + " tickers completed. " + str(round(i/tickerCount * 100, 2)) + "% complete. " + str(round(elapsed_time, 3))  + " seconds elapsed.")
 
 elapsed_time = time.time() - start_time
-print("Program completed in "+ str(round(elapsed_time, 3)) + " seconds. " + str(round(i/tickerCount, 2)) + "% complete.")
+print("Program completed in "+ str(round(elapsed_time, 3)) + " seconds. " + str(round(i/tickerCount * 100, 2)) + "% complete.")
+print("Program executed at an average " + str(round(tickerCount/elapsed_time, 2)) + " tickers per second.")
