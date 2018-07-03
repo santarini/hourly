@@ -21,16 +21,15 @@ def dataRequest(batchReq):
 def jsonParsetoCSV(jsonLoad, CurrentTicker):
     with open('StockDatabase/'+ str(CurrentTicker) + '.csv', 'a', encoding="utf-8") as csvfileA:
         fieldnames = ['Date','Time','Price', 'Volume', 'MktCap','SharesOut', 'SharesFloat']
-        #writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
-        writer.writeheader()
+        writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
+        #writer.writeheader()
         latestTime = jsonLoad[CurrentTicker]['quote']['latestTime']
         latestPrice = jsonLoad[CurrentTicker]['quote']['latestPrice']
         latestVolume = jsonLoad[CurrentTicker]['quote']['latestVolume']
         marketcap = jsonLoad[CurrentTicker]['stats']['marketcap']
         sharesOutstanding = jsonLoad[CurrentTicker]['stats']['sharesOutstanding']
         sharesFloat = jsonLoad[CurrentTicker]['stats']['float']
-        writer.writerow({'Date': 'blank','Time': 'blank','Price': str(latestPrice), 'Volume': str(latestVolume), 'MktCap': str(marketcap),'SharesOut': str(sharesOutstanding), 'SharesFloat': str(sharesFloat)})
-    
+        writer.writerow({'Date': datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),'Time': datetime.datetime.now(datetime.timezone.utc).strftime("%H:%M:%S.%f %Z"),'Price': str(latestPrice), 'Volume': str(latestVolume), 'MktCap': str(marketcap),'SharesOut': str(sharesOutstanding), 'SharesFloat': str(sharesFloat)})
 
 #create source folder if it doesnt exist yet
 if not os.path.exists('StockDatabase'):
