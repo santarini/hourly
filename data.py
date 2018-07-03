@@ -21,7 +21,8 @@ def dataRequest(batchReq):
 def jsonParsetoCSV(jsonLoad, CurrentTicker):
     with open('StockDatabase/'+ str(CurrentTicker) + '.csv', 'a', encoding="utf-8") as csvfileA:
         fieldnames = ['Date','Time','Price', 'Volume', 'MktCap','SharesOut', 'SharesFloat']
-        writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
+        #writer = csv.DictWriter(csvfileA, fieldnames=fieldnames, lineterminator = '\n')
+        writer.writeheader()
         latestTime = jsonLoad[CurrentTicker]['quote']['latestTime']
         latestPrice = jsonLoad[CurrentTicker]['quote']['latestPrice']
         latestVolume = jsonLoad[CurrentTicker]['quote']['latestVolume']
@@ -67,70 +68,3 @@ with open("AmericanTickers101.csv", encoding='utf-8') as csvfile:
             for innerStr in ticker:
                 CurrentTicker = innerStr
                 jsonParsetoCSV(jsonLoad, CurrentTicker)
-
-
-
-
-
-
-
-##    if not os.path.exists('stock_dfs/{}.csv'.format(ticker)):
-##        start = dt.datetime(2017,1,1)
-##        end = dt.datetime(2018,1,1)
-##        #use 'morningstar' for stocks
-##        df = web.DataReader(ticker, "iex", start, end)
-##        #use 'stooq' for indexes no dates necessary
-##        #df = web.DataReader('^DJI', 'stooq')
-##        df.to_csv('stock_dfs/{}.csv'.format(ticker))
-##        #you can also print these to test the program instead of going head first into csv
-##        #print(df.head())
-##    else:
-##        print('Already have {}'.format(ticker))
-##    print(",".join(batch))
-##
-
-##QtyHundreds = tickerCount/100
-##        for item in allTickers[1:3]:
-##        batchReq = ",".join(item)
-##    print(batchReq)
-
-
-        
-
-            #rawRow = re.search('[(.*)]', row)
-        #print(rawRow)
-
-
-##with open("tester.csv", encoding='utf-8') as csvfile:
-##    reader = csv.reader(csvfile)
-##    rowCount = sum(1 for row in reader)
-##    qtyHundreds = rowCount/100
-##
-####    if qtyHundreds > 1:
-####        #do some opeartion
-##
-##    for row in itertools.islice(reader, 0, 50):
-##        print(row)
-
-
-##
-##i = 2
-##
-###open csv
-##with open("tester.csv", encoding='utf-8') as csvfile:
-##    reader = csv.DictReader(csvfile)
-##    rowCount = sum(1 for row in reader)
-##    qtyHundreds = rowCount/100
-##    for i, row in enumerate(reader):
-##        if i == N:
-##            print("This is the line.")
-##            print(row)
-##            break
-##            
-##    print(rowCount)
-##    print(round(qtyHundreds))
-##
-###count number of cells in column
-###i = number of cells in column/100
-###j = 1
-###
