@@ -1,5 +1,6 @@
 import csv
 import itertools
+from itertools import zip_longest
 import re
 import os
 import datetime as dt
@@ -13,11 +14,15 @@ if not os.path.exists('StockDatabase'):
 
 with open("tester.csv", encoding='utf-8') as csvfile:
     reader = csv.reader(csvfile)
-##    rowCount = sum(1 for row in reader)
-    for row in itertools.islice(reader, 0, 10):
-        for innerStr in row:
+    data = list(reader)
+    rowCount = len(data)
+    for element in data:
+        for innerStr in element:
             batch.append(innerStr)
     print(batch)
+
+
+        
 
             #rawRow = re.search('[(.*)]', row)
         #print(rawRow)
