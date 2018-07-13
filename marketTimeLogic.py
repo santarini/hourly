@@ -11,6 +11,8 @@ for i in range(9,17):
     for j in range(0,60,10):
         if j < 10:
             timeHolder = (str(i) + ":0" + str(j))
+        elif i == 18 and j >= 40:
+            break
         else:
             timeHolder = (str(i) + ":" + str(j))
             schedule.every().monday.at(timeHolder).do(job)
